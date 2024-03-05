@@ -1,4 +1,4 @@
-# fconverter
+# MalwareDART
 A python malware detection analysis and reverse ngineering toolkit( ``MalwareDART``)
 `This is a Linux command-line interface (CLI) utility that use YARA , Capstone ,Redare2 among otheres to detect analyze and reverse engineer malware.
 
