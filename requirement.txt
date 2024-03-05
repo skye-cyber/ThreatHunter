@@ -1,0 +1,7 @@
+argparse
+yara
+capstone
+r2pipe
+elftools
+pefile
+progressbar
