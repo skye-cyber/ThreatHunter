@@ -1,0 +1,2 @@
+[console_scripts]
+MDART = MDART:main

@@ -13,18 +13,18 @@ setup(
     },
     python_requires='>=3',
     install_requires=[
-        argparse
-        'yara',
+        'argparse',
+        'yara-python',
         'capstone',
         'r2pipe',
-        'elftools',
+        'pyelftools',
         'pefile',
         'progressbar'
 
     ],
     include_package_data=True,
     license="MIT",
-    keywords='MDART', 'MalwareDART',
+    keywords='MalwareDART',
     classifiers=[
         "Environment :: Console",
         "Operating System :: POSIX :: Linux",
