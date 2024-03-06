@@ -16,11 +16,6 @@ A python malware detection analysis and reverse ngineering toolkit( ``MalwareDAR
    cd MalwareDART
    ```
 
-3. Install the required dependencies:
-
-   ```shell
-   pip install -r requirements.txt
-   ```
 4.Install the package:
    ```shell
    pip install ./
