@@ -1,6 +1,7 @@
 # MalwareDART
-A python malware detection analysis and reverse ngineering toolkit( ``MalwareDART``)
-`This is a Linux command-line interface (CLI) utility that use YARA , Capstone ,Redare2 among otheres to detect analyze and reverse engineer malware.
+A python malware detection, analysis and reverse ngineering toolkit( `MalwareDART``)
+This is a Linux command-line interface (CLI) utility that use YARA , Capstone ,Redare2 among otheres to detect analyze and reverse engineer malware.
+This is still a work in progress version, great things are underway.
 
 ## Installation
 
@@ -16,7 +17,7 @@ A python malware detection analysis and reverse ngineering toolkit( ``MalwareDAR
    cd MalwareDART
    ```
 
-4.Install the package:
+3. Install the package:
    ```shell
    pip install ./
    ```
@@ -33,14 +34,14 @@ Replace `[options]` with the appropriate command-line options.
 
 ## Available Options
 
-- `-P/--path`:path to directory or file to scan
+- `-p/--path`:path to directory or file to scan
 
 ## Examples
 
 1. Example command 1:
 
    ```shell
-   MDART -P /home/user/Documents/
+   MDART -p /home/user/Documents/
    ```
 
   The toolkit will scan all the files and folder in the `/home/user/Documents/` directory and it's nested
