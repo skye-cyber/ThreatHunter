@@ -4,7 +4,7 @@ This example focuses on extracting basic information about a given PE file.'''
 import os
 import sys
 from pefile import PE
-import pymem
+# import pymem
 import logging
 import logging.handlers
 
