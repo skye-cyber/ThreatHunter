@@ -1,18 +1,40 @@
 import os
 import sys
+import subprocess
 import time
 import datetime
 import yara
+import importlib.resources as impres
 from .elf import is_elf, get_elf_infor
 from .pe import is_pe, get_pe_infor
 from .show_progress import progress_show
+from .overwrite import clear_screen
+from . import date__time
 import logging
 import logging.handlers
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)-8s %(message)s')
 logger = logging.getLogger(__name__)
 
-log_file = '/home/user/MDART/log/yara.log'
+# Based of the system create log file
+if os.name == 'posix':
+    username = os.getlogin()
+    if not os.path.exists(f'/home/{username}/MDART/log/'):
+        subprocess.run(['mkdir', '-p', f'/home/{username}/MDART/log/'])
+    yara_log_file = f'/home/{username}/MDART/log/yara.log'
+elif os.name == 'nt':
+    if not os.path.exists('C:\\Users\\MDART_log'):
+        subprocess.run(['mkdir', '-p', 'C:\\Users\\MDART_log'])
+    yara_log_file = 'C:\\Users\\MDART\\log\\yara.log'
+
+
+# To obtain resources ie rules
+def get_rules_folder_path():
+    rules_folder = impres.files('MDART').joinpath('rules')
+    return str(rules_folder)
+
+
+# Ensure that rule file is in the appropriate path
 # get current date and time
 current_datetime = datetime.datetime.now()
 
@@ -29,9 +51,8 @@ def extract_description_sections(yara_file):
             for key_word in ref:
                 if line.strip().startswith(key_word):
                     print(f"\033[36m{line}\033[0m")
-                    log_file = '/home/user/MDART/log/yara.log'
                     with open(log_file, 'a') as log:
-                        log.write(f'\n{line}')
+                        yara_log_file.write(f'\n{line}')
                 else:
                     pass
 
@@ -39,12 +60,10 @@ def extract_description_sections(yara_file):
 # yara detection
 def yara_detection(path):
     try:
-        rule_dir = '/home/user/MDART/rules/'
+        rule_dir = get_rules_folder_path()
         for root, dirs, files in os.walk(rule_dir):
             for rule_name in files:
                 rule_path = os.path.join(root, rule_name)
-                # print(f'rule {rule_path} on {path}')
-                # time.sleep(0.5)
                 with open(rule_path, 'r') as f:
                     rule = f.read()
 
@@ -52,13 +71,13 @@ def yara_detection(path):
 
                     matches = rules.match(path)
                     if matches:
-                        logger.warning(f'\033[31mYARA detected possible\
+                        logger.warning(f'\033[1;31mYARA detected possible\
 Malware:\033[0m at\033[35m {path}\033[0m')
                         # extract_description_sections(rule_path)
                         time.sleep(2)
 
-                        with open(log_file, 'a') as log:
-                            log.write(f'{current_datetime}\n\
+                        with open(yara_log_file, 'a') as log:
+                            log.write(f'{date__time.get_date_time}\n\
 Yara detected Malware at: {path}\n')
                             log.write('__________USED RULE DETAILS__________')
                             log.write(
@@ -66,26 +85,41 @@ Yara detected Malware at: {path}\n')
                             time.sleep(1)
                         try:
                             # extract and log elf or pe infor if the file is \
-                            # any of them
-                            data_dumb = '/home/user/MDART/dumb/dumb.xml'
+                            # any of them use sys.stdout
+                            data_dumb = os.path.dirname(
+                                yara_log_file) + 'dumb.xml'
                             if is_elf(path):
                                 logger.info('Get elf data..')
                                 progress_show()
-                                get_elf_infor(path)
-                                time.sleep(5)
                                 with open(data_dumb) as log:
                                     log.write(
                                         '@@@@@@@@@ELF FILE INFO @@@@@@@@@')
-                                    log.write(get_elf_infor(path))
+                                    '''
+                                Define a function to write to both console
+                                and file
+                                '''
+                                    def write_and_print(obj):
+                                        sys.stdout.write(obj)
+                                        log.write(obj)
+                                    # Redirect stdout to the custom function
+                                    sys.stdout = write_and_print
+                                    # Call the target function
+                                    get_elf_infor(path)
                             elif is_pe(path):
                                 logger.info('Get pe data..')
                                 progress_show()
-                                get_infor(path)
                                 time.sleep(5)
                                 with open(data_dumb) as log:
                                     log.write(
                                         '@@@@@@@@@PE FILE INFO @@@@@@@@@')
-                                    log.write(get_elf_infor(path))
+
+                                    def write_and_print(obj):
+                                        sys.stdout.write(obj)
+                                        log.write(obj)
+                                    # Redirect stdout to the custom function
+                                    sys.stdout = write_and_print
+                                    # Call the target function
+                                    get_pe_infor(path)
                         except Exception:
                             pass
         else:
@@ -104,17 +138,17 @@ Yara detected Malware at: {path}\n')
 
 
 def scan_directory(directory_path):
-    log_path = '/home/user/MDART/log/'
-    rule_dir = '/home/user/MDART/rules/'
+    rule_dir = get_rules_folder_path()
     try:
         for root, dirs, files in os.walk(directory_path):
 
             for file_name in files:
                 file_path = os.path.join(root, file_name)
-                if log_path in file_path or rule_dir in file_path:
+                if yara_log_file in file_path or rule_dir in file_path:
                     continue
-                print(file_path)
+                print(f'\033[1;32mScanning:\033[0m{file_path}')
                 yara_detection(file_path)
+                clear_screen()
 
     except Exception as e:
         logger.error({e})
@@ -131,4 +165,4 @@ def yara_entry(input_file):
 
 
 if __name__ == '__main__':
-    yara_entry('/home/user/MDART/malware/desquirr.plw')
+    yara_entry('/home/user/')

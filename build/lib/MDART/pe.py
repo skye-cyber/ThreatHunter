@@ -4,7 +4,7 @@ This example focuses on extracting basic information about a given PE file.'''
 import os
 import sys
 from pefile import PE
-import pymem
+# import pymem
 import logging
 import logging.handlers
 
@@ -29,7 +29,7 @@ def get_infor(input_file):
     pe = PE(input_file)
     try:
         print(
-            "\033[36m______________________DOS Header Information______________________\033[0m\n")
+            "\033[1;36m______________________DOS Header Information______________________\033[0m\n")
         print(f"Magic Number: \033[35m{pe.DOS_HEADER.e_magic}\033[0m")
         print(f"Signature: \033[35m{pe.NT_HEADERS.Signature}\033[0m")
         print(f"e_minalloc: \033[35m{pe.DOS_HEADER.e_minalloc}\033[0m")
@@ -44,7 +44,7 @@ def get_infor(input_file):
         print(f"e_cblp: \033[35m{pe.DOS_HEADER.e_cblp}\033[0m")
 
         print(
-            "\033[36m______________________FILE_HEADER Information______________________\033[0m\n")
+            "\033[1;36m______________________FILE_HEADER Information______________________\033[0m\n")
         # print(f"Signature: {pe.DIRECTORY_ENTRY}")
         print(f"Machine: \033[35m{pe.FILE_HEADER.Machine}\033[0m")
         print(
@@ -59,7 +59,7 @@ def get_infor(input_file):
             f"Characteristics: \033[35m{pe.FILE_HEADER.Characteristics}\033[0m")
 
         print(
-            "\033[36m______________________OPTIONAL_HEADER Information______________________\033[0m\n")
+            "\033[1;36m______________________OPTIONAL_HEADER Information______________________\033[0m\n")
 
         print(f"Magic Number: \033[35m{pe.OPTIONAL_HEADER.Magic}\033[0m")
         print(f"Size Of Code: \033[35m{pe.OPTIONAL_HEADER.SizeOfCode}\033[0m")
@@ -77,7 +77,7 @@ def get_infor(input_file):
         print(f"CheckSum: \033[35m{pe.OPTIONAL_HEADER.CheckSum}\033[0m")
 
         print(
-            "\033[36m______________________PE SECTIONS Information______________________\033[0m\n")
+            "\033[1;36m______________________PE SECTIONS Information______________________\033[0m\n")
 
         for section in pe.sections:
             print(f"Name: \033[35m{str(section.Name[:5])}\033[0m Lines:\033[35m\
@@ -89,7 +89,7 @@ def get_infor(input_file):
 
         for item in pe.VS_FIXEDFILEINFO:
             print(
-                "\033[36m______________________VS_FIXEDFILEINFO______________________\033[0m\n")
+                "\033[1;36m______________________VS_FIXEDFILEINFO______________________\033[0m\n")
             print(f"FileType: \033[35m{item.FileType}\033[0m")
             print(f"FileOS: \033[35m{item.FileOS}\033[0m")
             print(f"FileFlags: \033[35m{item.FileFlags}\033[0m")
@@ -97,7 +97,7 @@ def get_infor(input_file):
             print(f"FileVersionLS: \033[35m{item.FileVersionLS}\033[0m")
 
         print(
-            "\033[36m______________________OTHER INFO______________________\033[0m\n")
+            "\033[1;36m______________________OTHER INFO______________________\033[0m\n")
 
         print(
             f"FileVersionLS: \033[35m{pe.StringFileInfo.StringTable.InternalName}\033[0m")
@@ -116,7 +116,7 @@ def get_pe_infor(input_file):
     if is_pe(input_file):
         get_infor(input_file)
     else:
-        logger.error('\033[36m File not PE file\033[0m')
+        logger.error('\033[1;36m File not PE file\033[0m')
         pass
 
 

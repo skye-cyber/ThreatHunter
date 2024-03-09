@@ -1,10 +1,10 @@
-from setuptools import setup
+from setuptools import setup, find_namespace_packages
 
 setup(
     name='MDART',
     version='1.0',
     author="Wambua aka Bullet Angel",
-    packages=["MDART"],
+    packages=find_namespace_packages(),
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     entry_points={
@@ -19,16 +19,18 @@ setup(
         'r2pipe',
         'pyelftools',
         'pefile',
-        'progressbar'
+        'progressbar',
+        'pymem'
 
     ],
     include_package_data=True,
+    package_data={'MDART': ['rules/*.*', 'warn/*.*']
+                  },
     license="MIT",
     keywords='MalwareDART',
     classifiers=[
         "Environment :: Console",
-        "Operating System :: POSIX :: Linux",
-        "Operating System :: DOS :: Windows",
+        "Operating System :: OS Independent",
         "Natural Language :: English",
         "Operating System :: OS Independent",
         "Programming Language :: Python",

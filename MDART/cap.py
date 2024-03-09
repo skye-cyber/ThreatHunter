@@ -6,24 +6,34 @@ import logging
 import logging.handlers
 from .elf import is_elf, get_elf_infor
 from .pe import is_pe, get_pe_infor
+from .overwrite import clear_screen
+from .date__time import get_date_time
 
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)-8s %(message)s')
 logger = logging.getLogger(__name__)
 
-# get current date and time
-current_datetime = datetime.datetime.now()
 
-'''# Extrace year, month,hour, minute and second
-year = current_datetime.year
-month = current_datetime.month
-day = current_datetime.day
-hour = current_datetime.hour
-minute = current_datetime.minute
-second = current_datetime.second'''
+# To obtain resources ie rules
+def get_rules_folder_path():
+    rules_folder = impres.files('MDART').joinpath('rules')
+    return str(rules_folder)
 
+
+# Based of the system create log file
+if os.name == 'posix':
+    username = os.getlogin()
+    if not os.path.exists(f'/home/{username}/MDART/log/'):
+        subprocess.run(['mkdir', '-p', f'/home/{username}/MDART/log/'])
+    log_file = f'/home/{username}/MDART/log/capstone.log'
+elif os.name == 'nt':
+    if not os.path.exists('C:\\Users\\MDART_log'):
+        subprocess.run(['mkdir', '-p', 'C:\\Users\\MDART_log'])
+    log_file = 'C:\\Users\\MDART\\log\\capstone.log'
 
 # capstone detection
+
+
 def capstone_detection(path):
     try:
         with open(path, 'rb') as f:
@@ -36,30 +46,46 @@ def capstone_detection(path):
                 logger.warning(f'\033[31mCapstone detected Malware at:\
 {path}\033[0m:')
                 time.sleep(1)
-                log_file = '/home/user/MDART/log/capstone.log'
                 with open(log_file, 'a') as log:
                     log.write(f'\n{current_datetime}\n Capstone detected \
 Malware at {path}')
                 try:
-                    data_dumb = '/home/user/MDART/dumb/dumb.xml'
+                    # extract and log elf or pe infor if the file is \
+                    # any of them use sys.stdout
+                    data_dumb = os.path.dirname(
+                        log_file) + 'dumb.xml'
                     if is_elf(path):
-                        logger.info('Get elf data...')
+                        logger.info('Get elf data..')
                         progress_show()
-                        get_elf_infor(path)
-                        time.sleep(5)
                         with open(data_dumb) as log:
                             log.write(
                                 '@@@@@@@@@ELF FILE INFO @@@@@@@@@')
-                            log.write(get_elf_infor(path))
+                            '''
+                        Define a function to write to both console
+                        and file
+                        '''
+                            def write_and_print(obj):
+                                sys.stdout.write(obj)
+                                log.write(obj)
+                            # Redirect stdout to the custom function
+                            sys.stdout = write_and_print
+                            # Call the target function
+                            get_elf_infor(path)
                     elif is_pe(path):
-                        logger.info('Get pe data...')
+                        logger.info('Get pe data..')
                         progress_show()
-                        get_pe_infor(path)
                         time.sleep(5)
                         with open(data_dumb) as log:
                             log.write(
                                 '@@@@@@@@@PE FILE INFO @@@@@@@@@')
-                            log.write(get_elf_infor(path))
+
+                            def write_and_print(obj):
+                                sys.stdout.write(obj)
+                                log.write(obj)
+                            # Redirect stdout to the custom function
+                            sys.stdout = write_and_print
+                            # Call the target function
+                            get_pe_infor(path)
                 except Exception:
                     pass
 
@@ -78,17 +104,22 @@ Malware at {path}')
 
 
 def scan_directory(directory_path):
-    log_path = '/home/user/MDART/log/'
-    rule_dir = '/home/user/MDART/rules/'
+    rule_dir = get_rules_folder_path()
     try:
         for root, dirs, files in os.walk(directory_path):
+            # Ignore git files
+            hidden_dirs = [d for d in dirs if os.path.isdir(
+                d) and d.startswith('.git')]
+            if hidden_dirs:
+                continue
             for file_name in files:
                 file_path = os.path.join(root, file_name)
                 if log_path in file_path or rule_dir in file_path:
                     # logger.info(f'Ignoring {file_path}')
                     continue
-                print(file_path)
+                print(f'\033[1:32mScanning:{file_path}')
                 capstone_detection(file_path)
+                clear_screen()
                 # time.sleep(0.2)
 
     except KeyboardInterrupt as e:
@@ -103,8 +134,6 @@ def entry_cap(input_file):
     try:
         if os.path.isdir(input_file):
             scan_directory(input_file)
-            print(f'\033[32mCheck log file at /home/user/MDART/log for \
-any redlines\t{current_datetime}')
         elif os.path.isfile(input_file):
             print(f'\033[33mScanning {input_file}\033[0m')
             capstone_detection(input_file)

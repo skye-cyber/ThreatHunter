@@ -16,13 +16,13 @@ def check_os():
     try:
         # check current System
         if os.name == 'posix':
-            logger.info('\033[35mRunning on unix system\033[0m')
+            logger.info('\033[1;35mRunning on unix system\033[0m')
 
-        elif os.name == 'ms-dos':
-            logger.info('\033[35mRunning on windows system\033[0m')
+        elif os.name == 'nt':
+            logger.info('\033[1;35mRunning on windows system\033[0m')
             # show additional information
         else:
-            logger.info('Unable to identify current System')
+            logger.info('\033[1;33mRunning on unidentified System')
     except KeyboardInterrupt as e:
         print(f'{e}\nExiting')
         time.sleep(1)
@@ -57,11 +57,11 @@ Engineering software')
         # Try using yara or capstone or redare2
         try:
             # use yara
-            logger.info('\033[32mRound one using \033[35mYARA\033[0m')
+            logger.info('\033[1;32mRound one using \033[1;35mYARA\033[0m')
             yara_entry(dir_path)
-            logger.info('\033[32mRound two using \033[35mCapstone\033[0m')
+            logger.info('\033[1;32mRound two using \033[1;35mCapstone\033[0m')
             entry_cap(dir_path)
-            logger.info('\033[32mRound three using \033[35mRedare2\033[0m')
+            logger.info('\033[1;32mRound three using \033[1;35mRedare2\033[0m')
             # elif entry_r2(dir_path):
 
         except KeyboardInterrupt as e:
@@ -75,9 +75,9 @@ Engineering software')
             root_dir = os.getcwd()
             print(f'current directory = {root_dir}')
             # use yara
-            logger.info('\033[32mRound one using \033[35mYARA\033[0m')
+            logger.info('\033[1;32mRound one using \033[1;35mYARA\033[0m')
             yara_entry(root_dir)
-            logger.info('\033[32mRound two using \033[35mCapstone\033[0m')
+            logger.info('\033[1;32mRound two using \033[1;35mCapstone\033[0m')
             entry_cap(root_dir)
 
         except KeyboardInterrupt as e:

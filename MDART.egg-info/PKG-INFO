@@ -5,8 +5,7 @@ Author: Wambua aka Bullet Angel
 License: MIT
 Keywords: MalwareDART
 Classifier: Environment :: Console
-Classifier: Operating System :: POSIX :: Linux
-Classifier: Operating System :: DOS :: Windows
+Classifier: Operating System :: OS Independent
 Classifier: Natural Language :: English
 Classifier: Operating System :: OS Independent
 Classifier: Programming Language :: Python
@@ -20,6 +19,7 @@ Classifier: Programming Language :: Python :: 3.11
 Classifier: Programming Language :: Python :: Implementation :: PyPi
 Requires-Python: >=3
 Description-Content-Type: text/markdown
+License-File: LICENSE
 Requires-Dist: argparse
 Requires-Dist: yara-python
 Requires-Dist: capstone
@@ -27,10 +27,12 @@ Requires-Dist: r2pipe
 Requires-Dist: pyelftools
 Requires-Dist: pefile
 Requires-Dist: progressbar
+Requires-Dist: pymem
 
-# fconverter
-A python malware detection analysis and reverse ngineering toolkit( ``MalwareDART``)
-`This is a Linux command-line interface (CLI) utility that use YARA , Capstone ,Redare2 among otheres to detect analyze and reverse engineer malware.
+# MalwareDART
+A python malware detection, analysis and reverse ngineering toolkit( `MalwareDART``)
+This is a Linux command-line interface (CLI) utility that use YARA , Capstone ,Redare2 among otheres to detect analyze and reverse engineer malware.
+This is still a work in progress version, great things are underway.
 
 ## Installation
 
@@ -46,12 +48,7 @@ A python malware detection analysis and reverse ngineering toolkit( ``MalwareDAR
    cd MalwareDART
    ```
 
-3. Install the required dependencies:
-
-   ```shell
-   pip install -r requirements.txt
-   ```
-4.Install the package:
+3. Install the package:
    ```shell
    pip install ./
    ```
@@ -68,14 +65,14 @@ Replace `[options]` with the appropriate command-line options.
 
 ## Available Options
 
-- `-P/--path`:path to directory or file to scan
+- `-p/--path`:path to directory or file to scan
 
 ## Examples
 
 1. Example command 1:
 
    ```shell
-   MDART -P /home/user/Documents/
+   MDART -p /home/user/Documents/
    ```
 
   The toolkit will scan all the files and folder in the `/home/user/Documents/` directory and it's nested
