@@ -5,6 +5,7 @@ import datetime
 import capstone
 import logging
 import logging.handlers
+import importlib.resources as impres
 from .elf import is_elf, get_elf_infor
 from .pe import is_pe, get_pe_infor
 from .overwrite import clear_screen
@@ -18,6 +19,7 @@ logger = logging.getLogger(__name__)
 # To obtain resources ie rules
 def get_rules_folder_path():
     rules_folder = impres.files('MDART').joinpath('rules')
+    print('responding...')
     return str(rules_folder)
 
 
@@ -108,26 +110,16 @@ def scan_directory(directory_path, verbosity):
     rule_dir = get_rules_folder_path()
     try:
         for root, dirs, files in os.walk(directory_path):
-            # Ignore git files
-            hidden_dirs = [d for d in dirs if os.path.isdir(
-                d) and d.startswith('.git')]
-            if hidden_dirs:
-                continue
+
             for file_name in files:
                 file_path = os.path.join(root, file_name)
-                if log_path in file_path or rule_dir in file_path:
-                    # print(' '*8, f'->Ignoring {file_path} ')
-                    # logger.info(f'Ignoring {file_path}')
+                if log_file in file_path or rule_dir in file_path:
                     continue
-                print(f'\033[1:32mScanning:{file_path}')
+                print(f'\033[1;32mScanning:\033[0m{file_path}')
                 capstone_detection(file_path)
                 if not verbosity:
                     clear_screen()
 
-    except KeyboardInterrupt as e:
-        print(f'{e}\nExiting')
-        time.sleep(0.01)
-        sys.exit(1)
     except Exception as e:
         logger.error({e})
 
@@ -146,11 +138,10 @@ def entry_cap(input_file, verbosity=False):
             capstone_detection(input_file)
     except KeyboardInterrupt as e:
         print(f'{e}\nExiting')
-        time.sleep(0.01)
         sys.exit(1)
     except Exception:
         pass
 
 
 if __name__ == '__main__':
-    entry_cap('/home/user/MDART/malware/desquirr.plw')
+    entry_cap('/home/user/Documents', verbosity=True)

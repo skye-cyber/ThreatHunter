@@ -145,8 +145,6 @@ def scan_directory(directory_path, verbosity):
             for file_name in files:
                 file_path = os.path.join(root, file_name)
                 if yara_log_file in file_path or rule_dir in file_path:
-                    # print(' '*8, f'->Ignoring {file_path} ')
-                    # logger.info(f'Ignoring {file_path}')
                     continue
                 print(f'\033[1;32mScanning:\033[0m{file_path}')
                 yara_detection(file_path)
