@@ -19,7 +19,7 @@ This is still a work in progress version, great things are underway.
 
 3. Install the package:
    ```shell
-   pip install ./
+   pip install -e ./
    ```
 
 ## Usage

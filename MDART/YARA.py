@@ -137,7 +137,7 @@ Yara detected Malware at: {path}\n')
         return False, None
 
 
-def scan_directory(directory_path):
+def scan_directory(directory_path, verbosity):
     rule_dir = get_rules_folder_path()
     try:
         for root, dirs, files in os.walk(directory_path):
@@ -145,20 +145,29 @@ def scan_directory(directory_path):
             for file_name in files:
                 file_path = os.path.join(root, file_name)
                 if yara_log_file in file_path or rule_dir in file_path:
+                    # print(' '*8, f'->Ignoring {file_path} ')
+                    # logger.info(f'Ignoring {file_path}')
                     continue
                 print(f'\033[1;32mScanning:\033[0m{file_path}')
                 yara_detection(file_path)
-                clear_screen()
+                if not verbosity:
+                    clear_screen()
 
     except Exception as e:
         logger.error({e})
 
 
-def yara_entry(input_file):
+def yara_entry(input_file, verbosity=False):
     try:
         if os.path.isdir(input_file):
-            scan_directory(input_file)
+            if verbosity:
+                print('verbose mode \033[33mON\033[0m')
+                scan_directory(input_file, verbosity=True)
+            else:
+                print('verbose mode \033[33mOFF\033[0m')
+                scan_directory(input_file, verbosity=False)
         elif os.path.isfile(input_file):
+            print(f'\033[1:32mScanning:{input_file}')
             yara_detection(input_file)
     except Exception:
         pass

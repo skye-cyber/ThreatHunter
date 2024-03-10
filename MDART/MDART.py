@@ -34,15 +34,18 @@ def check_os():
 def see_log():
     if os.name == 'posix':
         log = f'/home/{os.getlogin()}/MDART/log'
-        print(log)
+
         if os.path.exists(log):
-            print(f'\033[32mCheck log file at \
-{log}for any redlines\t{get_date_time()}')
+            print(f'\033[1;32mCheck log file at \
+\033[1;34m[\033[0m{log}\033[1;34m]\033[1;32m for any redlines \
+\033[1;33m{get_date_time()}')
+
     elif os.name == 'nt':
         log = 'C:\\Users\\MDART\\log'
+
         if os.path.exists(log):
-            print(f'\033[32mCheck log file at   for \
-{log}any redlines\t{get_date_time()}')
+            print(f'mCheck log file at   for \
+------[{log}]-----any redlines\t{get_date_time()}')
 
 
 def main():
@@ -51,17 +54,18 @@ Reverse-Engineering-Platform is an advanced malware analysis, and reverse \
 Engineering software')
 
     parser.add_argument('-p', '--path', help='scan a given directory or file')
-    parser.add_argument('--verbose', '-V', help='show more information on the \
-                        malware if detected')
+    parser.add_argument(
+        '--verbose', '-v', action='store_true', help='Enable\
+ verbose mode, screen will output hundrends of line , no screen cleaning')
 
     args = parser.parse_args()
     dir_path = args.path
-    verboseness = args.verbose
+    verbosity = args.verbose
 
     try:
         check_os()
         logger.info(f'Commencing scan in:')
-        dynamic_countdown(5)
+        dynamic_countdown(2)
     except Exception as e:
         print(f'{e}')
 
@@ -71,30 +75,51 @@ Engineering software')
     if args.path:
         # Try using yara or capstone or redare2
         try:
-            # use yara
-            logger.info('\033[1;32mRound one using \033[1;35mYARA\033[0m')
-            yara_entry(dir_path)
-            logger.info('\033[1;32mRound two using \033[1;35mCapstone\033[0m')
-            entry_cap(dir_path)
-            logger.info('\033[1;32mRound three using \033[1;35mRedare2\033[0m')
-            # elif entry_r2(dir_path):
-
+            if verbosity:
+                # use yara
+                logger.info('\033[1;32mRound 1 \033[1;35mYARA\033[0m')
+                yara_entry(dir_path, True)
+                logger.info(
+                    '\033[1;32mRound 2 \033[1;35mCapstone\033[0m')
+                entry_cap(dir_path, True)
+                logger.info(
+                    '\033[1;32mRound 3 \033[1;35mRedare2\033[0m')
+            else:
+                # use yara
+                logger.info('\033[1;32mRound 1 \033[1;35mYARA\033[0m')
+                yara_entry(dir_path)
+                logger.info(
+                    '\033[1;32mRound 2 \033[1;35mCapstone\033[0m')
+                entry_cap(dir_path)
+                logger.info(
+                    '\033[1;32mRound 3 \033[1;35mRedare2\033[0m')
         except KeyboardInterrupt as e:
             print(f'{e}\nExiting')
             time.sleep(1)
         except Exception as e:
             print(f'{e}')
-        see_log()
+        finally:
+            see_log()
 
     else:
         try:
             root_dir = os.getcwd()
-            print(f'current directory = {root_dir}')
-            # use yara
-            logger.info('\033[1;32mRound one using \033[1;35mYARA\033[0m')
-            yara_entry(root_dir)
-            logger.info('\033[1;32mRound two using \033[1;35mCapstone\033[0m')
-            entry_cap(root_dir)
+            if verbosity:
+                print(f'current directory = {root_dir}')
+                # use yara
+                logger.info('\033[1;32mRound 1 \033[1;35mYARA\033[0m')
+                yara_entry(root_dir, True)
+                logger.info(
+                    '\033[1;32mRound 2 \033[1;35mCapstone\033[0m')
+                entry_cap(root_dir, True)
+            else:
+                print(f'current directory = {root_dir}')
+                # use yara
+                logger.info('\033[1;32mRound 1 \033[1;35mYARA\033[0m')
+                yara_entry(root_dir)
+                logger.info(
+                    '\033[1;32mRound 2 \033[1;35mCapstone\033[0m')
+                entry_cap(root_dir)
         except KeyboardInterrupt as e:
             print(f'{e}\nExiting')
             see_log()
@@ -102,7 +127,8 @@ Engineering software')
             sys.exit(1)
         except Exception as e:
             print(f'{e}')
-        see_log()
+        finally:
+            see_log()
 
 
 if __name__ == '__main__':

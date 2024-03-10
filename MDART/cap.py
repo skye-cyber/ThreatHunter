@@ -103,7 +103,7 @@ Malware at {path}')
         logger.error({e})
 
 
-def scan_directory(directory_path):
+def scan_directory(directory_path, verbosity):
     rule_dir = get_rules_folder_path()
     try:
         for root, dirs, files in os.walk(directory_path):
@@ -115,12 +115,13 @@ def scan_directory(directory_path):
             for file_name in files:
                 file_path = os.path.join(root, file_name)
                 if log_path in file_path or rule_dir in file_path:
+                    # print(' '*8, f'->Ignoring {file_path} ')
                     # logger.info(f'Ignoring {file_path}')
                     continue
                 print(f'\033[1:32mScanning:{file_path}')
                 capstone_detection(file_path)
-                clear_screen()
-                # time.sleep(0.2)
+                if not verbosity:
+                    clear_screen()
 
     except KeyboardInterrupt as e:
         print(f'{e}\nExiting')
@@ -130,12 +131,17 @@ def scan_directory(directory_path):
         logger.error({e})
 
 
-def entry_cap(input_file):
+def entry_cap(input_file, verbosity=False):
     try:
         if os.path.isdir(input_file):
-            scan_directory(input_file)
+            if verbosity:
+                print('Verbose mode \033[33mON\033[0m')
+                scan_directory(input_file, verbosity=True)
+            else:
+                print('Verbose mode \033[33mOFF\033[0m')
+                scan_directory(input_file, verbosity=False)
         elif os.path.isfile(input_file):
-            print(f'\033[33mScanning {input_file}\033[0m')
+            print(f'\033[1:32mScanning:{input_file}')
             capstone_detection(input_file)
     except KeyboardInterrupt as e:
         print(f'{e}\nExiting')
