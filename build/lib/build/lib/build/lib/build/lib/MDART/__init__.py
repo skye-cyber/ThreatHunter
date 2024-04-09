@@ -1,1 +1,0 @@
-from .MDART import main
