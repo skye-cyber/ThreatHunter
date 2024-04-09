@@ -4,11 +4,12 @@ import subprocess
 import time
 import datetime
 import yara
-# import pkgutil
-import inspect
+import importlib.resources as impres
 from .elf import is_elf, get_elf_infor
 from .pe import is_pe, get_pe_infor
 from .show_progress import progress_show
+from .overwrite import clear_screen
+from . import date__time
 import logging
 import logging.handlers
 
@@ -27,11 +28,10 @@ elif os.name == 'nt':
     yara_log_file = 'C:\\Users\\MDART\\log\\yara.log'
 
 
+# To obtain resources ie rules
 def get_rules_folder_path():
-    package_root = MDART.__dict__.get('PACKAGE_ROOT', '')
-    if package_root:
-        rules_folder_path = os.path.join(package_root, 'rules')
-        return rules_folder_path
+    rules_folder = impres.files('MDART').joinpath('rules')
+    return str(rules_folder)
 
 
 # Ensure that rule file is in the appropriate path
@@ -51,8 +51,8 @@ def extract_description_sections(yara_file):
             for key_word in ref:
                 if line.strip().startswith(key_word):
                     print(f"\033[36m{line}\033[0m")
-                    with open(log_file, 'a') as log:
-                        yara_log_file.write(f'\n{line}')
+                    with open(yara_log_file, 'a') as log:
+                        log.write(f'\n{line}')
                 else:
                     pass
 
@@ -63,14 +63,11 @@ def yara_detection(path):
         rule_dir = get_rules_folder_path()
         for root, dirs, files in os.walk(rule_dir):
             for rule_name in files:
-                print(path + 'using' + rule_name)
-                time.sleep(1)
                 rule_path = os.path.join(root, rule_name)
                 with open(rule_path, 'r') as f:
                     rule = f.read()
 
                     rules = yara.compile(source=rule)
-
                     matches = rules.match(path)
                     if matches:
                         logger.warning(f'\033[1;31mYARA detected possible\
@@ -79,7 +76,7 @@ Malware:\033[0m at\033[35m {path}\033[0m')
                         time.sleep(2)
 
                         with open(yara_log_file, 'a') as log:
-                            log.write(f'{current_datetime}\n\
+                            log.write(f'{date__time.get_date_time}\n\
 Yara detected Malware at: {path}\n')
                             log.write('__________USED RULE DETAILS__________')
                             log.write(
@@ -139,10 +136,8 @@ Yara detected Malware at: {path}\n')
         return False, None
 
 
-def scan_directory(directory_path):
+def scan_directory(directory_path, verbosity):
     rule_dir = get_rules_folder_path()
-    print(rule_dir)
-    time.sleep(15)
     try:
         for root, dirs, files in os.walk(directory_path):
 
@@ -150,23 +145,32 @@ def scan_directory(directory_path):
                 file_path = os.path.join(root, file_name)
                 if yara_log_file in file_path or rule_dir in file_path:
                     continue
-                print(file_path)
-                time.sleep(7)
+                print(f'\033[1;32mScanning:\033[0m{file_path}')
                 yara_detection(file_path)
+                if not verbosity:
+                    clear_screen()
 
     except Exception as e:
         logger.error({e})
 
 
-def yara_entry(input_file):
+def yara_entry(input_file, verbosity=False):
+    print('YARA responding...')
     try:
         if os.path.isdir(input_file):
-            scan_directory(input_file)
+            if verbosity:
+                print('Verbose mode \033[33mON\033[0m')
+                scan_directory(input_file, verbosity=True)
+            else:
+                print('Verbose mode \033[33mOFF\033[0m')
+                scan_directory(input_file, verbosity=False)
         elif os.path.isfile(input_file):
+            print(f'\033[1:32mScanning:{input_file}')
             yara_detection(input_file)
     except Exception:
         pass
 
 
 if __name__ == '__main__':
-    yara_entry('/home/user/')
+    get_rules_folder_path()
+    yara_entry('/home/skye/Documents/Ego and Pride.doc')

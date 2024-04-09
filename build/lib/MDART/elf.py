@@ -1,8 +1,6 @@
 import sys
-import os
-import subprocess
-import yara
-from typing import Any
+# import subprocess
+# from typing import Any
 import hashlib
 from elftools.elf.elffile import ELFFile
 import logging
@@ -134,7 +132,9 @@ def get_sect_info(input_file):
                                 f"\tSymbol value: \033[32m{sym.entry.st_value}\033[0m")
                             print(
                                 f"\tSymbol size: \033[32m{sym.entry.st_size}\033[0m")
-
+    except KeyboardInterrupt:
+        print("\nExiting")
+        sys.exit(1)
     except Exception as e:
         print(f"An error occurred: {e}")
 
@@ -148,7 +148,7 @@ def calc_hash(file_path):
     print(f'SHA-256 checksum: {sha256_checksum}')
 
 
-def dynamic_analysis(sample_path):
+'''def dynamic_analysis(sample_path):
     # Get the process list before executing the malware sample
     process_list_before = subprocess.get_process_list()
 
@@ -165,7 +165,7 @@ def dynamic_analysis(sample_path):
         log.writelines(new_processes)
     # Get the vulnerability exploited by the malware sample
     vulnerability = get_vulnerability(sample_path)
-    return vulnerability, new_processes
+    return vulnerability, new_processes'''
 
 
 def get_elf_infor(input_file):

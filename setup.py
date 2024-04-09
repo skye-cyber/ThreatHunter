@@ -4,7 +4,7 @@ setup(
     name='MDART',
     version='1.0',
     author="Wambua aka Bullet Angel",
-    packages=find_namespace_packages(),
+    packages=find_namespace_packages(include=['*']),
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     entry_points={
@@ -24,7 +24,8 @@ setup(
 
     ],
     include_package_data=True,
-    package_data={'MDART': ['rules/*.*', 'warn/*.*']
+    package_data={
+        'MDART': ['rules/**/*', 'warn/**/*']
                   },
     license="MIT",
     keywords='MalwareDART',

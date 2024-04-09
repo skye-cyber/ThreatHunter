@@ -1,8 +1,8 @@
 argparse
-yara-python
 capstone
-r2pipe
-pyelftools
 pefile
 progressbar
+pyelftools
 pymem
+r2pipe
+yara-python

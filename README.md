@@ -8,7 +8,7 @@ This is still a work in progress version, great things are underway.
 1. Clone the repository:
 
    ```shell
-   git clone https://github.com/skye-cyber/MalwareDART
+   git clone https://github.com/skye-cyber/MalwareDART.git
    ```
 
 2. Navigate to the project directory:
@@ -19,7 +19,7 @@ This is still a work in progress version, great things are underway.
 
 3. Install the package:
    ```shell
-   pip install -e ./
+   pip install -e .
    ```
 
 ## Usage
@@ -35,6 +35,9 @@ Replace `[options]` with the appropriate command-line options.
 ## Available Options
 
 - `-p/--path`:path to directory or file to scan
+- `-v/--verbose`: Show all infor. By default screen clering is on so only one line of output show per time,
+pass verbose to prevent screen cleaning.
+verbose mode can be useful when work to e done is minimal
 
 ## Examples
 
@@ -44,12 +47,20 @@ Replace `[options]` with the appropriate command-line options.
    MDART -p /home/user/Documents/
    ```
 
+   ```shell
+   MDART -p /home/user/Documents/ -v
+   ```
+
   The toolkit will scan all the files and folder in the `/home/user/Documents/` directory and it's nested
   files and folders to the last child.
+  `-p` also accepts file input
 
 2. Scan working directory
    ```shell
    MDART
+   ```
+   ```shell
+   MDART -v
    ```
 Giving no option as in the above case, the toolkit will recursively scan the current directory (working directory)
 

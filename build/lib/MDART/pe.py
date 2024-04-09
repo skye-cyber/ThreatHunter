@@ -1,7 +1,7 @@
 '''This is an example using some popular Python libraries for reversing and
 analyzing PE files – a common format for executable files on Windows systems.
 This example focuses on extracting basic information about a given PE file.'''
-import os
+# import os
 import sys
 from pefile import PE
 # import pymem
@@ -32,16 +32,47 @@ def get_infor(input_file):
             "\033[1;36m______________________DOS Header Information______________________\033[0m\n")
         print(f"Magic Number: \033[35m{pe.DOS_HEADER.e_magic}\033[0m")
         print(f"Signature: \033[35m{pe.NT_HEADERS.Signature}\033[0m")
-        print(f"e_minalloc: \033[35m{pe.DOS_HEADER.e_minalloc}\033[0m")
-        print(f"e_maxalloc: \033[35m{pe.DOS_HEADER.e_maxalloc}\033[0m")
-        print(f"e_res: \033[35m{str(pe.DOS_HEADER.e_res)}\033[0m")
-        print(f"c_sum: \033[35m{pe.DOS_HEADER.e_csum}\033[0m")
-        print(f"e_maxalloc: \033[35m{pe.DOS_HEADER.e_maxalloc}\033[0m")
-        print(f"lfanew: \033[35m{pe.DOS_HEADER.e_lfanew}\033[0m")
-        print(f"e_lfarlc: \033[35m{pe.DOS_HEADER.e_lfarlc}\033[0m")
-        print(f"e_crlc: \033[35m{pe.DOS_HEADER.e_crlc}\033[0m")
-        print(f"e_cp: \033[35m{pe.DOS_HEADER.e_cp}\033[0m")
-        print(f"e_cblp: \033[35m{pe.DOS_HEADER.e_cblp}\033[0m")
+
+        '''This is a 4-byte unsigned integer representing the minimum amount of
+    memory (in paragraphs, where 1 paragraph = 16 bytes) required for the
+    program when it starts execution.'''
+        print(
+            f"Minimum memory allocation: \033[35m{pe.DOS_HEADER.e_minalloc}\033[0m")
+
+        '''Maximum'''
+        print(
+            f"Maximum memory allocation: \033[35m{pe.DOS_HEADER.e_maxalloc}\033[0m")
+
+        '''This is a 4-byte reserved space that should always be zeroed out;
+        it is not used by the loader or the application'''
+        print(f"Reserved Space: \033[35m{str(pe.DOS_HEADER.e_res)}\033[0m")
+
+        '''The checksum helps verify the integrity of the DOS header.'''
+        print(f"Header CheckSum: \033[35m{pe.DOS_HEADER.e_csum}\033[0m")
+
+        '''offset from the beginning of the file to the optional header.
+        It allows the loader to quickly locate the NT headers without parsing
+        the entire DOS header.'''
+        print(f"Header Offset: \033[35m{pe.DOS_HEADER.e_lfanew}\033[0m")
+
+        '''older versions of the PE file format'''
+        print(
+            f"Raw data Length: \033[35m{pe.DOS_HEADER.e_lfarlc}\033[0m")
+
+        '''This is a 4-byte unsigned integer that represents the CRC
+        (Cyclic Redundancy Check) value of the raw data section.
+        The CRC helps ensure the integrity of the data in the file.'''
+        print(
+            f"Cyclic Redundancy Check: \033[35m{pe.DOS_HEADER.e_crlc}\033[0m")
+
+        '''2-byte unsigned short that specifies the code page number.
+        The code page determines the character encoding used in the executable.
+        '''
+        print(f"Code Page: \033[35m{pe.DOS_HEADER.e_cp}\033[0m")
+
+        '''2-byte unsigned short that indicates the size of the new exe header,
+        including the DOS header itself and any overlays.'''
+        print(f"New exe size: \033[35m{pe.DOS_HEADER.e_cblp}\033[0m")
 
         print(
             "\033[1;36m______________________FILE_HEADER Information______________________\033[0m\n")
@@ -100,14 +131,17 @@ def get_infor(input_file):
             "\033[1;36m______________________OTHER INFO______________________\033[0m\n")
 
         print(
-            f"FileVersionLS: \033[35m{pe.StringFileInfo.StringTable.InternalName}\033[0m")
+            f"InternalName: \033[35m{pe.StringFileInfo.StringTable.InternalName}\033[0m")
         print(
-            f"FileVersionLS: \033[35m{pe.StringFileInfo.StringTable.FileDescription}\033[0m")
+            f"FileDescription: \033[35m{pe.StringFileInfo.StringTable.FileDescription}\033[0m")
         print(
-            f"FileVersionLS: \033[35m{pe.StringFileInfo.StringTable.LegalCopyright}\033[0m")
+            f"LegalCopyright: \033[35m{pe.StringFileInfo.StringTable.LegalCopyright}\033[0m")
         print(
-            f"FileVersionLS: \033[35m{pe.StringFileInfo.StringTable.OriginalFilename}\033[0m")
+            f"OriginalFilename: \033[35m{pe.StringFileInfo.StringTable.OriginalFilename}\033[0m")
 
+    except KeyboardInterrupt:
+        print("\nExiting")
+        sys.exit(1)
     except Exception:
         pass
 
