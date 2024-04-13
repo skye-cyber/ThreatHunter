@@ -1,4 +1,4 @@
-import struct
+# import struct
 from pytudesigner import PE
 
 

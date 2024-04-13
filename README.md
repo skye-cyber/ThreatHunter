@@ -64,6 +64,18 @@ verbose mode can be useful when work to e done is minimal
    ```
 Giving no option as in the above case, the toolkit will recursively scan the current directory (working directory)
 
+## Adding rule(s) to the existing rules
+```shell
+MDART --add @foo
+```
+where ``@foo`` is the rule file, folder or even rule in text form
+
+## Using exclusive rule
+You may also want to rune scan using a given rule only, that case, you can follow this format
+```shell
+MDART --use @foo
+```
+where ``@foo`` is the rule file, folder or rule itself
 ## Contributing
 Feel free to submit any suggestions!
 

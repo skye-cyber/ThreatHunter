@@ -1,35 +1,71 @@
-import os
-import sys
-import time
 import argparse
-from .mytimer import dynamic_countdown
-from .YARA import yara_entry
-from .cap import entry_cap
-from .date__time import get_date_time
 # from mach_O import get_macho_info
 import logging
 import logging.handlers
+import os
+import sys
+import time
+
+from .cap import entry_cap
+from .date__time import get_date_time
+from .mytimer import dynamic_countdown
+from .YARA import yara_entry
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)-8s %(message)s')
 logger = logging.getLogger(__name__)
 
 
 def check_os():
-    try:
-        # check current System
-        if os.name == 'posix':
-            logger.info('\033[1;35mRunning on unix system\033[0m')
+    def os_type():
+        try:
+            # check current System
+            if os.name == 'posix':
+                logger.info('\033[1;35mRunning on unix system\033[0m')
 
-        elif os.name == 'nt':
-            logger.info('\033[1;35mRunning on windows system\033[0m')
-            # show additional information
-        else:
-            logger.info('\033[1;33mRunning on unidentified System')
-    except KeyboardInterrupt as e:
-        print(f'{e}\nExiting')
-        time.sleep(1)
-    except Exception as e:
-        print(f'{e}')
+            elif os.name == 'nt':
+                logger.info('\033[1;35mRunning on windows system\033[0m')
+                # show additional information
+            else:
+                logger.info('\033[1;33mRunning on unidentified System')
+        except KeyboardInterrupt as e:
+            print(f'{e}\nExiting')
+            time.sleep(1)
+        except Exception as e:
+            print(f'{e}')
+    return os_type
+
+
+def add_rule():
+    def r_add(rule):
+        import importlib.resources as impres
+        import subprocess
+        rules_folder = impres.files('MDART').joinpath('rules')
+
+        def verify():
+            # check whether the rule was added successfully
+            if os.path.exists(rules_folder.joinpath(rule)):
+                print("Status: \033[1;92mOk\033[0m")
+                sys.exit(0)
+            p, f = os.path.split(rule)
+            if os.path.exists(rules_folder.joinpath(f)):
+                print("Status: \033[1;92mOk\033[0m")
+                sys.exit(0)
+            else:
+                print("Status: \033[92mfail\033[0m")
+                sys.exit(1)
+        try:
+            if os.path.isfile(rule) or os.path.isdir(rule):
+                full_path = os.path.abspath(rule)
+                if os.path.exists(full_path):
+                    subprocess.run(['cp', full_path, rules_folder])
+            else:
+                with open('rule.yara', 'a') as f:
+                    f.write(rule)
+                abs_fpath = os.path.abspath(rule)
+                subprocess.run(['cp', abs_fpath, rules_folder])
+        finally:
+            verify()
+    return r_add
 
 
 def see_log():
@@ -50,29 +86,40 @@ def see_log():
 
 
 def main():
-    parser = argparse.ArgumentParser(description='MAREP is a Malware-Analysis-\
-Reverse-Engineering-Platform is an advanced malware analysis, and reverse \
-Engineering software')
+    parser = argparse.ArgumentParser(description='''MDART is a Malware:
+Detection-Analysis-Reverse-Engineering-Toolkit''')
 
-    parser.add_argument('-p', '--path', help='scan a given directory or file')
+    parser.add_argument('-p', '--path', help='''scan a given directory or file
+example \033[1;93mMDART -p /home/user\033[0m''')
+    parser.add_argument('--use', help="Use an exlusive rule")
+
+    parser.add_argument('-a', '--add', help='''add a new rule to existing yara
+rules example \033[1;93mMDART --add rule.yara\033[0m''')
+
     parser.add_argument(
-        '--verbose', '-v', action='store_true', help='Enable\
- verbose mode, screen will output hundrends of line , no screen cleaning')
+        '--verbose', '-v', action='store_true', help='''Enable verbose mode,
+screen will output hundrends of line , no screen cleaning example;
+\033[1;93mMDART --path -v\033[0m''')
 
     args = parser.parse_args()
     dir_path = args.path
     verbosity = args.verbose
 
     try:
-        check_os()
+        os = check_os()
+        os.__call__()
         logger.info('Commencing scan in:')
         dynamic_countdown(2)
-    except Exception as e:
-        print(f'{e}')
+    except KeyboardInterrupt:
+        print('\nExiting')
+        sys.exit(1)
 
     except Exception as e:
         print(f'{e}')
 
+    if args.add:
+        adr = add_rule()
+        adr.__call__(args.add)
     if args.path:
         # Try using yara or capstone or redare2
         try:
@@ -101,6 +148,10 @@ Engineering software')
             print(f'{e}')
         finally:
             see_log()
+
+    elif args.use:
+        print("\033[1;93mCall yara in exclusive mode\033[0m")
+        yara_entry(dir_path, args.use, True)
 
     else:
         try:

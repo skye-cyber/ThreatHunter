@@ -58,7 +58,7 @@ def extract_description_sections(yara_file):
 
 
 # yara detection
-def yara_detection(path):
+def yara_detection(path, exclusive_rule=''):
     try:
         rule_dir = get_rules_folder_path()
         for root, dirs, files in os.walk(rule_dir):
@@ -136,7 +136,7 @@ Yara detected Malware at: {path}\n')
         return False, None
 
 
-def scan_directory(directory_path, verbosity):
+def scan_directory(directory_path, exclusive, verbosity):
     rule_dir = get_rules_folder_path()
     try:
         for root, dirs, files in os.walk(directory_path):
@@ -146,7 +146,10 @@ def scan_directory(directory_path, verbosity):
                 if yara_log_file in file_path or rule_dir in file_path:
                     continue
                 print(f'\033[1;32mScanning:\033[0m{file_path}')
-                yara_detection(file_path)
+                if exclusive == 'OFF':
+                    yara_detection(file_path)
+                elif exclusive != 'OFF':
+                    exclusive(file_path, exclusive)
                 if not verbosity:
                     clear_screen()
 
@@ -154,21 +157,37 @@ def scan_directory(directory_path, verbosity):
         logger.error({e})
 
 
-def yara_entry(input_file, verbosity=False):
+def yara_entry(input_file, exclusive='OFF', verbosity=False):
     print('YARA responding...')
     try:
+
         if os.path.isdir(input_file):
             if verbosity:
                 print('Verbose mode \033[33mON\033[0m')
-                scan_directory(input_file, verbosity=True)
+                scan_directory(input_file, exclusive, verbosity=True)
+
             else:
                 print('Verbose mode \033[33mOFF\033[0m')
-                scan_directory(input_file, verbosity=False)
+                scan_directory(input_file, exclusive, verbosity=False)
+
         elif os.path.isfile(input_file):
-            print(f'\033[1:32mScanning:{input_file}')
-            yara_detection(input_file)
+            if not exclusive:
+                exclusive(input_file, exclusive)
+            elif exclusive:
+                print(f'\033[1:32mScanning:{input_file}')
+                yara_detection(input_file)
     except Exception:
         pass
+
+
+def exclusive(path, rule):
+    rules = yara.compile(source=rule)
+    matches = rules.match(path)
+    if matches:
+        print("\033[1;92mMAtch found\033[0m")
+    else:
+        print("\033[91mNo match found\033[0m")
+        sys.exit(0)
 
 
 if __name__ == '__main__':
