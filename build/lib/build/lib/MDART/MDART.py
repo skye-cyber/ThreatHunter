@@ -123,7 +123,12 @@ screen will output hundrends of line , no screen cleaning example;
     if args.path:
         # Try using yara or capstone or redare2
         try:
-            if verbosity:
+            # Verbose mode
+            if verbosity and args.use:
+                print("\033[1;93mCall yara in exclusive mode\033[0m")
+                yara_entry(dir_path, args.use, True)
+
+            elif verbosity and not args.use:
                 # use yara
                 logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m')
                 yara_entry(dir_path, True)
@@ -132,7 +137,13 @@ screen will output hundrends of line , no screen cleaning example;
                 entry_cap(dir_path, True)
                 logger.info(
                     '\033[1;32mCalling \033[1;35mRedare2\033[0m')
-            else:
+
+            # Non-Verbose mode
+            elif not verbosity and args.use:
+                print("\033[1;93mCall yara in exclusive mode\033[0m")
+                yara_entry(dir_path, args.use)
+
+            elif not verbosity and not args.use:
                 # use yara
                 logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m')
                 yara_entry(dir_path)
@@ -149,14 +160,14 @@ screen will output hundrends of line , no screen cleaning example;
         finally:
             see_log()
 
-    elif args.use:
-        print("\033[1;93mCall yara in exclusive mode\033[0m")
-        yara_entry(dir_path, args.use, True)
-
     else:
         try:
             root_dir = os.getcwd()
-            if verbosity:
+            if verbosity and args.use:
+                print("\033[1;93mCall yara in exclusive mode\033[0m")
+                yara_entry(dir_path, args.use, True)
+
+            elif verbosity and not args.use:
                 print(f'current directory = {root_dir}')
                 # use yara
                 logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m')
@@ -164,7 +175,12 @@ screen will output hundrends of line , no screen cleaning example;
                 logger.info(
                     '\033[1;32mCalling \033[1;35mCapstone\033[0m')
                 entry_cap(root_dir, True)
-            else:
+
+            elif not verbosity and args.use:
+                print("\033[1;93mCall yara in exclusive mode\033[0m")
+                yara_entry(dir_path, args.use)
+
+            elif not verbosity and not args.use:
                 print(f'current directory = {root_dir}')
                 # use yara
                 logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m')
@@ -172,6 +188,7 @@ screen will output hundrends of line , no screen cleaning example;
                 logger.info(
                     '\033[1;32mCalling \033[1;35mCapstone\033[0m')
                 entry_cap(root_dir)
+
         except KeyboardInterrupt as e:
             print(f'{e}\nExiting')
             see_log()
