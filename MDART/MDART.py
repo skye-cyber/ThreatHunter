@@ -106,8 +106,8 @@ screen will output hundrends of line , no screen cleaning example;
     verbosity = args.verbose
 
     try:
-        os = check_os()
-        os.__call__()
+        os_type = check_os()
+        os_type.__call__()
         logger.info('Commencing scan in:')
         dynamic_countdown(2)
     except KeyboardInterrupt:
