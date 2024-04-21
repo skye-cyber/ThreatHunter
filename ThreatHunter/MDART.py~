@@ -91,13 +91,13 @@ Detection-Analysis-Reverse-Engineering-Toolkit''')
 
     parser.add_argument('-p', '--path', help='''scan a given directory or file
 example \033[1;93mThreatHunter -p /home/user\033[0m''')
-    parser.add_argument('--use', help="Use an exlusive rule")
 
     parser.add_argument('-a', '--add', help='''add a new rule to existing yara
 rules example \033[1;93mThreatHunter --add rule.yara\033[0m''')
 
     parser.add_argument('-u', '--use', help='''Provide rule file to match
-instead of the default rules example \033[1;93mThreatHunter -p /home/user/ -use file.yara\033[0m''')
+instead of the default rules example
+\033[1;93mThreatHunter -p /home/user/ --use-rule file.yara\033[0m''')
     parser.add_argument(
         '--verbose', '-v', action='store_true', help='''Enable verbose mode,
 screen will output hundrends of line , no screen cleaning example;
@@ -157,9 +157,9 @@ screen will output hundrends of line , no screen cleaning example;
                     '\033[1;32mCalling \033[1;35mRedare2\033[0m')
 =======
             if verbosity:
-                if args.exclusive:
+                if args.use:
                     logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m in exclusive mode')
-                    yara_entry(dir_path, args.exclusive, True)
+                    yara_entry(dir_path, args.use, True)
                 else:
                     # use yara
                     logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m')
@@ -170,9 +170,9 @@ screen will output hundrends of line , no screen cleaning example;
                     logger.info(
                         '\033[1;32mCalling \033[1;35mRedare2\033[0m')
             else:
-                if args.exclusive:
+                if args.use:
                     logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m in exclusive mode')
-                    yara_entry(dir_path, args.exclusive, True)
+                    yara_entry(dir_path, args.use, True)
                 else:
                     # use yara
                     logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m')
