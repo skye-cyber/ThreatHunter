@@ -19,18 +19,18 @@ logger = logging.getLogger(__name__)
 # Based of the system create log file
 if os.name == 'posix':
     username = os.getlogin()
-    if not os.path.exists(f'/home/{username}/MDART/log/'):
-        subprocess.run(['mkdir', '-p', f'/home/{username}/MDART/log/'])
-    yara_log_file = f'/home/{username}/MDART/log/yara.log'
+    if not os.path.exists(f'/home/{username}/.ThreatHunter/log/'):
+        subprocess.run(['mkdir', '-p', f'/home/{username}/.ThreatHunter/log/'])
+    yara_log_file = f'/home/{username}/.ThreatHunter/log/yara.log'
 elif os.name == 'nt':
-    if not os.path.exists('C:\\Users\\MDART_log'):
-        subprocess.run(['mkdir', '-p', 'C:\\Users\\MDART_log'])
-    yara_log_file = 'C:\\Users\\MDART\\log\\yara.log'
+    if not os.path.exists('C:\\Users\\ThreatHunter_log'):
+        subprocess.run(['mkdir', '-p', 'C:\\Users\\ThreatHunter_log'])
+    yara_log_file = 'C:\\Users\\ThreatHunter\\log\\yara.log'
 
 
 # To obtain resources ie rules
 def get_rules_folder_path():
-    rules_folder = impres.files('MDART').joinpath('rules')
+    rules_folder = impres.files('ThreatHunter').joinpath('rules')
     return str(rules_folder)
 
 
@@ -136,7 +136,7 @@ Yara detected Malware at: {path}\n')
         return False, None
 
 
-def scan_directory(directory_path, exclusive, verbosity):
+def scan_directory(directory_path, is_exclusive=None, verbosity=True):
     rule_dir = get_rules_folder_path()
     try:
         for root, dirs, files in os.walk(directory_path):
@@ -146,18 +146,17 @@ def scan_directory(directory_path, exclusive, verbosity):
                 if yara_log_file in file_path or rule_dir in file_path:
                     continue
                 print(f'\033[1;32mScanning:\033[0m{file_path}')
-                if exclusive == 'OFF':
+                if is_exclusive:
                     yara_detection(file_path)
-                elif exclusive != 'OFF':
+                elif is_exclusive:
                     exclusive(file_path, exclusive)
                 if not verbosity:
                     clear_screen()
-
     except Exception as e:
-        logger.error({e})
+        logger.error(e, exc_info=1, stack_info=True)
 
 
-def yara_entry(input_file, exclusive='OFF', verbosity=False):
+def yara_entry(input_file, is_exclusive=None, verbosity=False):
     print('YARA responding...')
     try:
 
@@ -171,9 +170,9 @@ def yara_entry(input_file, exclusive='OFF', verbosity=False):
                 scan_directory(input_file, exclusive, verbosity=False)
 
         elif os.path.isfile(input_file):
-            if not exclusive:
-                exclusive(input_file, exclusive)
-            elif exclusive:
+            if not is_exclusive:
+                exclusive(input_file, is_exclusive)
+            elif is_exclusive:
                 print(f'\033[1:32mScanning:{input_file}')
                 yara_detection(input_file)
     except Exception:

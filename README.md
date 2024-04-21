@@ -8,12 +8,12 @@ This is still a work in progress version, great things are underway.
 1. Install via pip:
 
    ```shell
-   pip install -e ThreatHunter
+   pip install ThreatHunter
       ```
 2. Install from github:
 
    ```shell
-   pip install -e git+https://github.com/skye-cyber/ThreatHunter.git
+   pip install git+https://github.com/skye-cyber/ThreatHunter.git
    ```
 ## Usage
 

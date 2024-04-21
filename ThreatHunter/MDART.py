@@ -70,7 +70,7 @@ def add_rule():
 
 def see_log():
     if os.name == 'posix':
-        log = f'/home/{os.getlogin()}/.MDART/log'
+        log = f'/home/{os.getlogin()}/.ThreatHunter/log'
 
         if os.path.exists(log):
             print(f'\033[1;32mCheck log file at \
@@ -78,7 +78,7 @@ def see_log():
 \033[1;33m{get_date_time()}')
 
     elif os.name == 'nt':
-        log = 'C:\\Users\\MDART\\log'
+        log = 'C:\\Users\\ThreatHunter\\log'
 
         if os.path.exists(log):
             print(f'mCheck log file at   for \
@@ -96,6 +96,8 @@ example \033[1;93mMDART -p /home/user\033[0m''')
     parser.add_argument('-a', '--add', help='''add a new rule to existing yara
 rules example \033[1;93mMDART --add rule.yara\033[0m''')
 
+    parser.add_argument('-e', '--exclusive', help="Provide rule file to match \
+instead of the default")
     parser.add_argument(
         '--verbose', '-v', action='store_true', help='''Enable verbose mode,
 screen will output hundrends of line , no screen cleaning example;
@@ -124,23 +126,31 @@ screen will output hundrends of line , no screen cleaning example;
         # Try using yara or capstone or redare2
         try:
             if verbosity:
-                # use yara
-                logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m')
-                yara_entry(dir_path, True)
-                logger.info(
-                    '\033[1;32mCalling \033[1;35mCapstone\033[0m')
-                entry_cap(dir_path, True)
-                logger.info(
-                    '\033[1;32mCalling \033[1;35mRedare2\033[0m')
+                if args.exclusive:
+                    logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m in exclusive mode')
+                    yara_entry(dir_path, args.exclusive, True)
+                else:
+                    # use yara
+                    logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m')
+                    yara_entry(dir_path, None, True)
+                    logger.info(
+                        '\033[1;32mCalling \033[1;35mCapstone\033[0m')
+                    entry_cap(dir_path, True)
+                    logger.info(
+                        '\033[1;32mCalling \033[1;35mRedare2\033[0m')
             else:
-                # use yara
-                logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m')
-                yara_entry(dir_path)
-                logger.info(
-                    '\033[1;32mCalling \033[1;35mCapstone\033[0m')
-                entry_cap(dir_path)
-                logger.info(
-                    '\033[1;32mCalling \033[1;35mRedare2\033[0m')
+                if args.exclusive:
+                    logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m in exclusive mode')
+                    yara_entry(dir_path, args.exclusive, True)
+                else:
+                    # use yara
+                    logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m')
+                    yara_entry(dir_path, None)
+                    logger.info(
+                        '\033[1;32mCalling \033[1;35mCapstone\033[0m')
+                    entry_cap(dir_path)
+                    logger.info(
+                        '\033[1;32mCalling \033[1;35mRedare2\033[0m')
         except KeyboardInterrupt as e:
             print(f'{e}\nExiting')
             time.sleep(1)
