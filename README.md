@@ -1,33 +1,26 @@
-# MalwareDART
-A python malware detection, analysis and reverse ngineering toolkit( `MalwareDART``)
+# ThreatHunter
+A python malware detection, analysis and reverse ngineering toolkit.
 This is a Linux command-line interface (CLI) utility that use YARA , Capstone ,Redare2 among otheres to detect analyze and reverse engineer malware.
 This is still a work in progress version, great things are underway.
 
 ## Installation
 
-1. Clone the repository:
+1. Install via pip:
 
    ```shell
-   git clone https://github.com/skye-cyber/MalwareDART.git
-   ```
-
-2. Navigate to the project directory:
+   pip install -e ThreatHunter
+      ```
+2. Install from github:
 
    ```shell
-   cd MalwareDART
+   pip install -e git+https://github.com/skye-cyber/ThreatHunter.git
    ```
-
-3. Install the package:
-   ```shell
-   pip install -e .
-   ```
-
 ## Usage
 
 To run the CLI app, use the following command:
 
 ```shell
-MDART [option]
+ThreatHunter [option]
 ```
 
 Replace `[options]` with the appropriate command-line options.
@@ -44,11 +37,11 @@ verbose mode can be useful when work to e done is minimal
 1. Example command 1:
 
    ```shell
-   MDART -p /home/user/Documents/
+   ThreatHunter -p /home/user/Documents/
    ```
 
    ```shell
-   MDART -p /home/user/Documents/ -v
+   ThreatHunter -p /home/user/Documents/ -v
    ```
 
   The toolkit will scan all the files and folder in the `/home/user/Documents/` directory and it's nested
@@ -57,23 +50,23 @@ verbose mode can be useful when work to e done is minimal
 
 2. Scan working directory
    ```shell
-   MDART
+   ThreatHunter
    ```
    ```shell
-   MDART -v
+   ThreatHunter -v
    ```
 Giving no option as in the above case, the toolkit will recursively scan the current directory (working directory)
 
 ## Adding rule(s) to the existing rules
 ```shell
-MDART --add @foo
+ThreatHunter --add @foo
 ```
 where ``@foo`` is the rule file, folder or even rule in text form
 
 ## Using exclusive rule
 You may also want to rune scan using a given rule only, that case, you can follow this format
 ```shell
-MDART --use @foo
+ThreatHunter --use @foo
 ```
 where ``@foo`` is the rule file, folder or rule itself
 ## Contributing

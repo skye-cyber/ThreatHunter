@@ -1,15 +1,15 @@
 from setuptools import setup, find_namespace_packages
 
 setup(
-    name='MDART',
-    version='1.0',
+    name='ThreatHunter',
+    version='1.0.0',
     author="Wambua aka Bullet Angel",
     packages=find_namespace_packages(include=['*']),
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     entry_points={
         'console_scripts': [
-            "MDART=MDART:main"],
+            "ThreatHunter=ThreatHunter:main"],
     },
     python_requires='>=3',
     install_requires=[
@@ -25,10 +25,11 @@ setup(
     ],
     include_package_data=True,
     package_data={
-        'MDART': ['rules/**/*', 'warn/**/*']
+        'ThreatHunter': ['rules/**/*', 'warn/**/*']
                   },
     license="MIT",
-    keywords='MalwareDART',
+    keywords=['MalwareDART', "ThreatHunter", "malware", "malware-analysis", "malware-scan", "malware-detection", "trojan", "virus"
+    ],
     classifiers=[
         "Environment :: Console",
         "Operating System :: OS Independent",
@@ -42,6 +43,5 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
-        "Programming Language :: Python :: Implementation :: PyPi",
     ],
 )

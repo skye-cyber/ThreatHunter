@@ -1,8 +1,0 @@
-argparse
-capstone
-pefile
-progressbar
-pyelftools
-pymem
-r2pipe
-yara-python
