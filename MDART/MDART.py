@@ -70,7 +70,7 @@ def add_rule():
 
 def see_log():
     if os.name == 'posix':
-        log = f'/home/{os.getlogin()}/MDART/log'
+        log = f'/home/{os.getlogin()}/.MDART/log'
 
         if os.path.exists(log):
             print(f'\033[1;32mCheck log file at \
