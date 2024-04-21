@@ -90,18 +90,19 @@ def main():
 Detection-Analysis-Reverse-Engineering-Toolkit''')
 
     parser.add_argument('-p', '--path', help='''scan a given directory or file
-example \033[1;93mMDART -p /home/user\033[0m''')
+example \033[1;93mThreatHunter -p /home/user\033[0m''')
     parser.add_argument('--use', help="Use an exlusive rule")
 
     parser.add_argument('-a', '--add', help='''add a new rule to existing yara
-rules example \033[1;93mMDART --add rule.yara\033[0m''')
+rules example \033[1;93mThreatHunter --add rule.yara\033[0m''')
 
-    parser.add_argument('-e', '--exclusive', help="Provide rule file to match \
-instead of the default")
+    parser.add_argument('-u', '--use', help='''Provide rule file to match
+instead of the default rules example
+\033[1;93mThreatHunter -p /home/user/ -use file.yara\033[0m''')
     parser.add_argument(
         '--verbose', '-v', action='store_true', help='''Enable verbose mode,
 screen will output hundrends of line , no screen cleaning example;
-\033[1;93mMDART --path -v\033[0m''')
+\033[1;93mThreatHunter --path -v\033[0m''')
 
     args = parser.parse_args()
     dir_path = args.path
