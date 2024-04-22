@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: ThreatHunter
-Version: 1.0.1
+Version: 1.1.2
 Author: Wambua aka Bullet Angel
 License: MIT
 Keywords: MalwareDART,ThreatHunter,malware,malware-analysis,malware-scan,malware-detection,trojan,virus
@@ -88,9 +88,10 @@ where ``@foo`` is the rule file, folder or even rule in text form
 ## Using exclusive rule
 You may also want to rune scan using a given rule only, that case, you can follow this format
 ```shell
-ThreatHunter --use @foo
+ThreatHunter --use @foo -p
 ```
-where ``@foo`` is the rule file, folder or rule itself
+where ``@foo`` is the rule file, folder or rule itself.
+if ``-u/--use`` is used, then ``-p/--path`` must be provided
 ## Contributing
 Feel free to submit any suggestions!
 

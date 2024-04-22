@@ -1,8 +1,8 @@
-from setuptools import setup, find_namespace_packages
+from setuptools import find_namespace_packages, setup
 
 setup(
     name='ThreatHunter',
-    version='1.0.1',
+    version='1.1.2',
     author="Wambua aka Bullet Angel",
     packages=find_namespace_packages(include=['*']),
     long_description=open('README.md').read(),
@@ -26,10 +26,10 @@ setup(
     include_package_data=True,
     package_data={
         'ThreatHunter': ['rules/**/*', 'warn/**/*']
-                  },
+    },
     license="MIT",
     keywords=['MalwareDART', "ThreatHunter", "malware", "malware-analysis", "malware-scan", "malware-detection", "trojan", "virus"
-    ],
+              ],
     classifiers=[
         "Environment :: Console",
         "Operating System :: OS Independent",

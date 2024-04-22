@@ -66,9 +66,10 @@ where ``@foo`` is the rule file, folder or even rule in text form
 ## Using exclusive rule
 You may also want to rune scan using a given rule only, that case, you can follow this format
 ```shell
-ThreatHunter --use @foo
+ThreatHunter --use @foo -p
 ```
-where ``@foo`` is the rule file, folder or rule itself
+where ``@foo`` is the rule file, folder or rule itself.
+if ``-u/--use`` is used, then ``-p/--path`` must be provided
 ## Contributing
 Feel free to submit any suggestions!
 
