@@ -136,57 +136,93 @@ Yara detected Malware at: {path}\n')
         return False, None
 
 
-def scan_directory(directory_path, is_exclusive=None, verbosity=True):
+def scan_directory(directory_path, verbosity=True):
     rule_dir = get_rules_folder_path()
+
     try:
         for root, dirs, files in os.walk(directory_path):
-
+            num_file = len(files)
+            print(f'\033[1:92mScan \033[96m{num_file} \033[0mfiles')
             for file_name in files:
                 file_path = os.path.join(root, file_name)
                 if yara_log_file in file_path or rule_dir in file_path:
                     continue
                 print(f'\033[1;32mScanning:\033[0m{file_path}')
-                if is_exclusive:
-                    yara_detection(file_path)
-                elif is_exclusive:
-                    exclusive(file_path, exclusive)
-                if not verbosity:
+                yara_detection(file_path)
+                if verbosity:
                     clear_screen()
+
     except Exception as e:
         logger.error(e, exc_info=1, stack_info=True)
 
 
-def yara_entry(input_file, is_exclusive=None, verbosity=False):
-    print('YARA responding...')
+def yara_entry(input_file, verbosity=False):
+    rule_dir = get_rules_folder_path()
+    for root, dirs, files in os.walk(rule_dir):
+        num_files = len(files)
+    print(f"\033[1;94m{num_files}\033[0m rule files")
     try:
 
         if os.path.isdir(input_file):
             if verbosity:
                 print('Verbose mode \033[33mON\033[0m')
-                scan_directory(input_file, exclusive, verbosity=True)
+                scan_directory(input_file, False)
 
             else:
                 print('Verbose mode \033[33mOFF\033[0m')
-                scan_directory(input_file, exclusive, verbosity=False)
+                scan_directory(input_file, True)
 
         elif os.path.isfile(input_file):
-            if not is_exclusive:
-                exclusive(input_file, is_exclusive)
-            elif is_exclusive:
-                print(f'\033[1:32mScanning:{input_file}')
-                yara_detection(input_file)
+            print(f'\033[1:32mScan:\033[96m 1\033[0m file ->{input_file}')
+            yara_detection(input_file)
     except Exception:
         pass
 
 
-def exclusive(path, rule):
-    rules = yara.compile(source=rule)
-    matches = rules.match(path)
-    if matches:
-        print("\033[1;92mMAtch found\033[0m")
-    else:
-        print("\033[91mNo match found\033[0m")
-        sys.exit(0)
+def evalp(path, rule, verbose=True):
+    def exmatch(path, rule):
+        if os.path.isfile(rule):
+            print("\033[1;94m1\033[0m rule file to use")
+            rule = rule
+        elif os.path.isdir(rule):
+            rule_list = walk_rule_dir(rule)
+            num_files = len(rule_list)
+            print(f"\033[1;94m{num_files}\033[0m rule files to use")
+            for file in rule_list:
+                rule = file
+        with open(rule, 'r') as f:
+            rule = f.read()
+            rules = yara.compile(source=rule)
+            matches = rules.match(path)
+            if matches:
+                print("\033[1;92mMAtch found\033[0m")
+            else:
+                print("\033[91mNo match found\033[0m")
+                sys.exit(0)
+
+    def walk_rule_dir(path):
+        # print_once = False
+        rule_list = []
+        for root, dirs, files in os.walk(path):
+            for file_name in files:
+                file_path = os.path.join(root, file_name)
+                rule_list.append(file_path)
+        return rule_list
+
+    if os.path.isfile(path):
+        exmatch(path, rule)
+        print(f'\033[1:32mScanning:{path}\033[0m')
+    if os.path.isdir(path):
+        for root, dirs, files in os.walk(path):
+            num_file = len(files)
+            print(f'\033[1:92mScan \033[96m{num_file} \033[0mfiles', end='\r')
+            for file_name in files:
+                file_path = os.path.join(root, file_name)
+                print(f'\n\033[93m{path}\033[0m', end='\r')
+                exmatch(file_path, rule)
+                if not verbose:
+                    clear_screen()
+            break
 
 
 if __name__ == '__main__':

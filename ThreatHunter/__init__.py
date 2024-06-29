@@ -1,1 +1,1 @@
-from .MDART import main
+from .THmain import main

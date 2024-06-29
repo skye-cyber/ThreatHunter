@@ -9,7 +9,7 @@ import time
 from .cap import entry_cap
 from .date__time import get_date_time
 from .mytimer import dynamic_countdown
-from .YARA import yara_entry, evalp
+from .YARA import evalp, yara_entry
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)-8s %(message)s')
 logger = logging.getLogger(__name__)
@@ -107,6 +107,11 @@ screen will output hundrends of line , no screen cleaning example;
     dir_path = args.path
     verbosity = args.verbose
 
+    if args.use and not args.path:
+        parser.error(
+            "if \033[93m-u/--use\033[0m is used then \033[93m-p/--path\033[0m \
+must be provide to specify path to scan")
+
     try:
         os_type = check_os()
         os_type.__call__()
@@ -125,24 +130,24 @@ screen will output hundrends of line , no screen cleaning example;
     if args.path:
         # Try using yara or capstone or redare2
         try:
-            if verbosity:
-                if args.use:
-                    print("\033[1;93mCall yara in exclusive mode\033[0m")
-                    evalp(dir_path, args.use, True)
-                    sys.exit(0)
+            if verbosity and args.use:
+
+                print("\033[1;93mCall yara in exclusive mode\033[0m")
+                evalp(dir_path, args.use, True)
+                sys.exit(0)
+            elif verbosity and not args.use:
                 # use yara
-                print("this")
                 logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m')
                 yara_entry(dir_path, True)
                 logger.info(
                     '\033[1;32mCalling \033[1;35mCapstone\033[0m')
                 entry_cap(dir_path, True)
                 logger.info('\033[1;32mCalling \033[1;35mRedare2\033[0m')
-            else:
-                if args.path:
-                    print("\033[1;93mCall yara in exclusive mode\033[0m")
-                    evalp(dir_path, args.use, True)
-                    sys.exit(0)
+            elif not verbosity and args.use:
+                print("\033[1;93mCall yara in exclusive mode\033[0m")
+                evalp(dir_path, args.use, True)
+                sys.exit(0)
+            elif not verbosity and not args.use:
                 # use yara
                 logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m')
                 yara_entry(dir_path, False)
@@ -155,7 +160,7 @@ screen will output hundrends of line , no screen cleaning example;
             print(f'{e}\nExiting')
             time.sleep(1)
         except Exception as e:
-            logger.error(e, exc_infor=1, stack_info)
+            logger.error(e, exc_infor=1, stack_info=True)
         finally:
             see_log()
 

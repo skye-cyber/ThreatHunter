@@ -9,7 +9,7 @@ import time
 from .cap import entry_cap
 from .date__time import get_date_time
 from .mytimer import dynamic_countdown
-from .YARA import yara_entry
+from .YARA import evalp, yara_entry
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)-8s %(message)s')
 logger = logging.getLogger(__name__)
@@ -97,15 +97,20 @@ rules example \033[1;93mThreatHunter --add rule.yara\033[0m''')
 
     parser.add_argument('-u', '--use', help='''Provide rule file to match
 instead of the default rules example
-\033[1;93mThreatHunter -p /home/user/ --use file.yara\033[0m''')
+\033[1;93mThreatHunter -p /home/user/ --use file.yara -p /home/\033[0m''')
     parser.add_argument(
-        '--verbose', '-v', action='store_true', help='''Enable verbose mode,
+        '-v', '--verbose', action='store_true', help='''Enable verbose mode,
 screen will output hundrends of line , no screen cleaning example;
 \033[1;93mThreatHunter --path -v\033[0m''')
 
     args = parser.parse_args()
     dir_path = args.path
     verbosity = args.verbose
+
+    if args.use and not args.path:
+        parser.error(
+            "if \033[93m-u/--use\033[0m is used then \033[93m-p/--path\033[0m \
+must be provide to specify path to scan")
 
     try:
         os_type = check_os()
@@ -125,43 +130,39 @@ screen will output hundrends of line , no screen cleaning example;
     if args.path:
         # Try using yara or capstone or redare2
         try:
-            if verbosity:
-                if args.use:
-                    logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m in exclusive mode')
-                    yara_entry(dir_path, args.use, True)
-                else:
+            if verbosity and args.use:
+
+                print("\033[1;93mCall yara in exclusive mode\033[0m")
+                evalp(dir_path, args.use, True)
+                sys.exit(0)
+            elif verbosity and not args.use:
+                # use yara
+                logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m')
+                yara_entry(dir_path, True)
+                logger.info(
+                    '\033[1;32mCalling \033[1;35mCapstone\033[0m')
+                entry_cap(dir_path, True)
+                logger.info('\033[1;32mCalling \033[1;35mRedare2\033[0m')
+            elif not verbosity and args.use:
+                print("\033[1;93mCall yara in exclusive mode\033[0m")
+                evalp(dir_path, args.use, True)
+                sys.exit(0)
+            elif not verbosity and not args.use:
                     # use yara
                     logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m')
-                    yara_entry(dir_path, None, True)
+                    yara_entry(dir_path, False)
                     logger.info(
                         '\033[1;32mCalling \033[1;35mCapstone\033[0m')
-                    entry_cap(dir_path, True)
-                    logger.info(
-                        '\033[1;32mCalling \033[1;35mRedare2\033[0m')
-            else:
-                if args.use:
-                    logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m in exclusive mode')
-                    yara_entry(dir_path, args.use, True)
-                else:
-                    # use yara
-                    logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m')
-                    yara_entry(dir_path, None)
-                    logger.info(
-                        '\033[1;32mCalling \033[1;35mCapstone\033[0m')
-                    entry_cap(dir_path)
+                    entry_cap(dir_path, False)
                     logger.info(
                         '\033[1;32mCalling \033[1;35mRedare2\033[0m')
         except KeyboardInterrupt as e:
             print(f'{e}\nExiting')
             time.sleep(1)
         except Exception as e:
-            print(f'{e}')
+            logger.error(e, exc_infor=1, stack_info=True)
         finally:
             see_log()
-
-    elif args.use:
-        print("\033[1;93mCall yara in exclusive mode\033[0m")
-        yara_entry(dir_path, args.use, True)
 
     else:
         try:
@@ -178,10 +179,10 @@ screen will output hundrends of line , no screen cleaning example;
                 print(f'current directory = {root_dir}')
                 # use yara
                 logger.info('\033[1;32mCalling \033[1;35mYARA\033[0m')
-                yara_entry(root_dir)
+                yara_entry(root_dir, False)
                 logger.info(
                     '\033[1;32mCalling \033[1;35mCapstone\033[0m')
-                entry_cap(root_dir)
+                entry_cap(root_dir, False)
         except KeyboardInterrupt as e:
             print(f'{e}\nExiting')
             see_log()
