@@ -2,8 +2,9 @@ LICENSE
 MANIFEST.ini
 README.md
 setup.py
-ThreatHunter/MDART.py
 ThreatHunter/MDART.py~
+ThreatHunter/MDART.py~~
+ThreatHunter/THmain.py
 ThreatHunter/YARA.py
 ThreatHunter/YARA.py~
 ThreatHunter/__init__.py

@@ -1,16 +1,22 @@
-from setuptools import setup, find_namespace_packages
+from setuptools import find_namespace_packages, setup
 
 setup(
     name='ThreatHunter',
-    version='1.0.1',
+    version='1.1.2',
     author="Wambua aka Bullet Angel",
     packages=find_namespace_packages(include=['*']),
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
+
     entry_points={
         'console_scripts': [
-            "ThreatHunter=ThreatHunter:main"],
+            "ThreatHunter=ThreatHunter:main",
+            "Threathunter=ThreatHunter:main",
+            "threathunter=ThreatHunter:main",
+            "THREATHUNTER=ThreatHunter:main"
+        ],
     },
+
     python_requires='>=3',
     install_requires=[
         'argparse',
@@ -23,13 +29,15 @@ setup(
         'pymem'
 
     ],
+
     include_package_data=True,
     package_data={
         'ThreatHunter': ['rules/**/*', 'warn/**/*']
-                  },
+    },
+
     license="MIT",
-    keywords=['MalwareDART', "ThreatHunter", "malware", "malware-analysis", "malware-scan", "malware-detection", "trojan", "virus"
-    ],
+    keywords=['MalwareDART', "ThreatHunter", "malware", "malware-analysis", "malware-scan", "malware-detection", "trojan", "virus"],
+
     classifiers=[
         "Environment :: Console",
         "Operating System :: OS Independent",
