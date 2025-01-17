@@ -12,20 +12,24 @@ from .overwrite import clear_screen
 from . import date__time
 import logging
 import logging.handlers
+from .colors import (RED, DRED, RESET, BLUE, DBLUE, YELLOW, DYELLOW, GREEN, DGREEN, BWHITE, CYAN, DCYAN, MAGENTA, DMAGENTA, FMAGENTA)
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)-8s %(message)s')
 logger = logging.getLogger(__name__)
 
 # Based of the system create log file
-if os.name == 'posix':
-    username = os.getlogin()
-    if not os.path.exists(f'/home/{username}/.ThreatHunter/log/'):
-        subprocess.run(['mkdir', '-p', f'/home/{username}/.ThreatHunter/log/'])
-    yara_log_file = f'/home/{username}/.ThreatHunter/log/yara.log'
-elif os.name == 'nt':
-    if not os.path.exists('C:\\Users\\ThreatHunter_log'):
-        subprocess.run(['mkdir', '-p', 'C:\\Users\\ThreatHunter_log'])
-    yara_log_file = 'C:\\Users\\ThreatHunter\\log\\yara.log'
+try:
+    if os.name == 'posix':
+        username = os.getlogin()
+        if not os.path.exists(f'/home/{username}/.ThreatHunter/log/'):
+            subprocess.run(['mkdir', '-p', f'/home/{username}/.ThreatHunter/log/'])
+        yara_log_file = f'/home/{username}/.ThreatHunter/log/yara.log'
+    elif os.name == 'nt':
+        if not os.path.exists('C:\\Users\\ThreatHunter_log'):
+            subprocess.run(['mkdir', '-p', 'C:\\Users\\ThreatHunter_log'])
+        yara_log_file = 'C:\\Users\\ThreatHunter\\log\\yara.log'
+except PermissionError as e:
+    print(f"{RED}{e}{RESET}")
 
 
 # To obtain resources ie rules
@@ -46,11 +50,11 @@ def extract_description_sections(yara_file):
            'samples', 'updated_date', 'tags', 'Author', 'tc_detection_type',
            'tc_detection_name', 'tc_detection_factor', 'tool', 'mitre_att'}
     with open(yara_file, 'r') as f:
-        print("\033[33m__________USED RULE INFOR__________\033[0m")
+        print(f"{YELLOW}__________USED RULE INFOR__________{RESET}")
         for line in f:
             for key_word in ref:
                 if line.strip().startswith(key_word):
-                    print(f"\033[36m{line}\033[0m")
+                    print(f"{CYAN}{line}{RESET}")
                     with open(yara_log_file, 'a') as log:
                         log.write(f'\n{line}')
                 else:
@@ -70,8 +74,8 @@ def yara_detection(path, exclusive_rule=''):
                     rules = yara.compile(source=rule)
                     matches = rules.match(path)
                     if matches:
-                        logger.warning(f'\033[1;31mYARA detected possible\
-Malware:\033[0m at\033[35m {path}\033[0m')
+                        logger.warning(f'{DRED}YARA detected possible\
+Malware:{RESET} at{FMAGENTA} {path}{RESET}')
                         # extract_description_sections(rule_path)
                         time.sleep(2)
 
@@ -140,14 +144,17 @@ def scan_directory(directory_path, verbosity=True):
     rule_dir = get_rules_folder_path()
 
     try:
+        num_file = []
         for root, dirs, files in os.walk(directory_path):
-            num_file = len(files)
-            print(f'\033[1:92mScan \033[96m{num_file} \033[0mfiles')
+            for fname in files:
+                num_file.append(fname)
+        for root, dirs, files in os.walk(directory_path):
+            print(f'{BWHITE}Scan {CYAN}{len(num_file)} {RESET}files')
             for file_name in files:
                 file_path = os.path.join(root, file_name)
                 if yara_log_file in file_path or rule_dir in file_path:
                     continue
-                print(f'\033[1;32mScanning:\033[0m{file_path}')
+                print(f'{DGREEN}Scanning:{RESET}{file_path}')
                 yara_detection(file_path)
                 if verbosity:
                     clear_screen()
@@ -158,22 +165,25 @@ def scan_directory(directory_path, verbosity=True):
 
 def yara_entry(input_file, verbosity=False):
     rule_dir = get_rules_folder_path()
+    num_rf = []
     for root, dirs, files in os.walk(rule_dir):
-        num_files = len(files)
-    print(f"\033[1;94m{num_files}\033[0m rule files")
+        for file in files:
+            num_rf.append(file)
+
+    print(f"Rule files = {DBLUE}{len(num_rf)}{RESET}")
     try:
 
         if os.path.isdir(input_file):
             if verbosity:
-                print('Verbose mode \033[33mON\033[0m')
+                print(F'Verbose mode {YELLOW}ON{RESET}')
                 scan_directory(input_file, False)
 
             else:
-                print('Verbose mode \033[33mOFF\033[0m')
+                print(F'Verbose mode {YELLOW}OFF{RESET}')
                 scan_directory(input_file, True)
 
         elif os.path.isfile(input_file):
-            print(f'\033[1:32mScan:\033[96m 1\033[0m file ->{input_file}')
+            print(f'{DGREEN}Scan:{CYAN} 1{RESET} file ->{input_file}')
             yara_detection(input_file)
     except Exception:
         pass
@@ -182,12 +192,12 @@ def yara_entry(input_file, verbosity=False):
 def evalp(path, rule, verbose=True):
     def exmatch(path, rule):
         if os.path.isfile(rule):
-            print("\033[1;94m1\033[0m rule file to use")
+            print(f"{DBLUE}1{rule}{RESET} rule file to use")
             rule = rule
         elif os.path.isdir(rule):
             rule_list = walk_rule_dir(rule)
-            num_files = len(rule_list)
-            print(f"\033[1;94m{num_files}\033[0m rule files to use")
+            num_rf = len(rule_list)
+            print(f"{DBLUE}{num_rf}{RESET} rule files to use")
             for file in rule_list:
                 rule = file
         with open(rule, 'r') as f:
@@ -195,9 +205,9 @@ def evalp(path, rule, verbose=True):
             rules = yara.compile(source=rule)
             matches = rules.match(path)
             if matches:
-                print("\033[1;92mMAtch found\033[0m")
+                print(F"\033[1;92mMAtch found{RESET}")
             else:
-                print("\033[91mNo match found\033[0m")
+                print(F"\033[91mNo match found{RESET}")
                 sys.exit(0)
 
     def walk_rule_dir(path):
@@ -211,14 +221,20 @@ def evalp(path, rule, verbose=True):
 
     if os.path.isfile(path):
         exmatch(path, rule)
-        print(f'\033[1:32mScanning:{path}\033[0m')
+        print(f'{DGREEN}Scanning:{path}{RESET}')
     if os.path.isdir(path):
+
+        # Count number of files to scan
+        num_file = []
+        for _root, _dirs, _files in os.walk(path):
+            for _file in _files:
+                num_file.append(_file)
+
         for root, dirs, files in os.walk(path):
-            num_file = len(files)
-            print(f'\033[1:92mScan \033[96m{num_file} \033[0mfiles', end='\r')
+            print(f'{DGREEN}Scan {CYAN}{len(num_file)} {RESET}files', end='\r')
             for file_name in files:
                 file_path = os.path.join(root, file_name)
-                print(f'\n\033[93m{path}\033[0m', end='\r')
+                print(f'\n{YELLOW}{path}{RESET}', end='\r')
                 exmatch(file_path, rule)
                 if not verbose:
                     clear_screen()

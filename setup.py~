@@ -34,7 +34,6 @@ setup(
     package_data={
         'ThreatHunter': ['rules/**/*', 'warn/**/*']
     },
-<<<<<<< HEAD
 
     license="MIT",
     keywords=['MalwareDART', "ThreatHunter", "malware", "malware-analysis", "malware-scan", "malware-detection", "trojan", "virus"],

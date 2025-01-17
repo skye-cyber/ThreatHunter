@@ -2,7 +2,7 @@ from setuptools import find_namespace_packages, setup
 
 setup(
     name='ThreatHunter',
-    version='1.1.2',
+    version='1.1.4',
     author="Wambua aka Bullet Angel",
     packages=find_namespace_packages(include=['*']),
     long_description=open('README.md').read(),

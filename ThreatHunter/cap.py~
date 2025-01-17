@@ -41,17 +41,27 @@ def capstone_detection(path):
     try:
         with open(path, 'rb') as f:
             data = f.read()
+    '''1. Anti-Debugging Techniques:
+    Malware often uses various anti-debugging techniques to prevent analysts from understanding its behavior. int3 and int1 can be used as part of these techniques:
 
+    int3 (Breakpoint Interrupt):
+
+    Debugging Detection: Malware might place int3 instructions at strategic points in its code. When run in a debugger, hitting an int3 instruction causes a breakpoint, which can disrupt the analysis process or trigger anti-debugging routines.
+    Flow Obfuscation: By placing int3 instructions and handling them with custom exception handlers, malware can obfuscate its control flow, making it harder for analysts to follow the execution path.
+    int1 (Single-Step Interrupt):
+
+    Single-Step Trap: This instruction can be used to detect single-step debugging. If a debugger is used to step through the code, the int1 instruction triggers an interrupt that the malware can catch and use to alter its behavior or terminate execution.
+'''
         md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
         for i in md.disasm(data, 0):
             if i.mnemonic == 'int3' or i.mnemonic == 'int1':
 
-                logger.warning(f'\033[31mCapstone detected Malware at:\
+                logger.warning(f'\033[31mCapstone detected possible Malware at:\
 {path}\033[0m:')
                 time.sleep(1)
                 with open(log_file, 'a') as log:
                     log.write(f'\n{get_date_time()}\n Capstone detected \
-Malware at {path}')
+possible Malware at {path}')
                 try:
                     # extract and log elf or pe infor if the file is \
                     # any of them use sys.stdout
@@ -125,7 +135,7 @@ def scan_directory(directory_path, verbosity=True):
 
 
 def entry_cap(input_file, verbosity=False):
-    print('\033[3;92mResponse ..')
+    print('\033[3;92m Response ..')
     try:
         if os.path.isdir(input_file):
             if verbosity:
