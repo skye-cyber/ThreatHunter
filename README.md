@@ -139,3 +139,14 @@ This project is an open source software. Under GPL-3.0 license
 
 Feel free to modify and customize this template according to your specific project requirements and add any additional sections or information that you think would be helpful for users.
 
+
+## Acknowledgements
+[YARA](https://github.com/VirusTotal/yara) – Pattern‑matching engine
+
+[Capstone](https://www.capstone-engine.org/) – Disassembly framework
+
+[Radare2](https://www.capstone-engine.org/) – Reverse engineering toolkit
+
+[Shields.io](https://shields.io/) – Status badges 
+
+GitHub’s README guidelines 
