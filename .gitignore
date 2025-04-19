@@ -1,0 +1,34 @@
+# Ignore the entire src directory (if not needed)
+src/**
+
+# Ignore this .gitignore file itself (not necessary, but can be included for clarity)
+#.gitignore
+
+# Ignore Python cache directories
+__pycache__/
+*.py[cod]
+
+# Ignore temporary files
+*~
+ThreatHunter.egg-info/**
+# Ignore build directories
+**/build/
+**/dist/
+
+# Ignore IDE and editor files
+.vscode/
+.idea/
+*.vscode/
+*.idea/
+
+__pycache__/**/*
+# Ignore operating system files
+.DS_Store
+Thumbs.db
+
+# Ignore log files
+*.log
+
+# Ignore virtual environment directories (if applicable)
+env/
+venv/

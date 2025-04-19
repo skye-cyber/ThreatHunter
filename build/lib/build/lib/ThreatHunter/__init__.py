@@ -1,1 +1,0 @@
-from .THmain import main

@@ -1,5 +1,0 @@
-[console_scripts]
-THREATHUNTER = ThreatHunter:main
-ThreatHunter = ThreatHunter:main
-Threathunter = ThreatHunter:main
-threathunter = ThreatHunter:main
