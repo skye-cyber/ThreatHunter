@@ -67,7 +67,7 @@ ThreatHunter [OPTIONS]
 
 Replace `[options]` with the appropriate command-line options.
 
-## Available Options
+## Options
 
 | Flag                  | Description                                           |
 |-----------------------|-------------------------------------------------------|

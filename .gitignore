@@ -21,7 +21,7 @@ ThreatHunter.egg-info/**
 *.vscode/
 *.idea/
 
-__pycache__/**/*
+**/*/__pycache__/**/*
 # Ignore operating system files
 .DS_Store
 Thumbs.db

@@ -6,8 +6,10 @@ def progress_show():
     total_iterations = 100
 
     # Create a progress bar
-    bar = progressbar.ProgressBar(maxval=total_iterations,
-                                  widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
+    bar = progressbar.ProgressBar(
+        maxval=total_iterations,
+        widgets=[progressbar.Bar("=", "[", "]"), " ", progressbar.Percentage()],
+    )
     bar.start()
 
     for i in range(1, total_iterations + 1):
@@ -19,4 +21,4 @@ def progress_show():
 
 
 if __name__ == "__main__":
-    progress_bar_animation()
+    progress_show()
